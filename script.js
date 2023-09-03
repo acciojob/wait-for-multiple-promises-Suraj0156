@@ -1,36 +1,80 @@
 //your JS code here. If required.
-const promises = [];
+// const res = document.getElementById("output");
 
-for (let i = 0; i < 3; i++) {
-  const delay = Math.random() * 2 + 1;
-  const promise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(delay);
-    }, delay * 1000);
-  });
+// const promises = [
+// 	new Promise((resolve) =>{
+// 	const time = Math.floor(Math.random() *3 +1) * 1000;
+// 	setTimeOut(() => resolve ({ name:"promise 1", time: time/1000}), 1000);
+// 	}),
+// 	new Promise((resolve) =>{
+// 	const time = Math.floor(Math.random() *3 +1) * 1000;
+// 	setTimeOut(() => resolve ({ name:"promise 2", time: time/1000}), 1000);
+// 	}),
+// 	new Promise((resolve) =>{
+// 	const time = Math.floor(Math.random() *3 +1) * 1000;
+// 	setTimeOut(() => resolve ({ name:"promise 3", time: time/1000}), 1000);
+// 	})
+// ];
 
-  promises.push(promise);
+// async function callfn(){
+// 	await Promise.all(promises).then((results)=>{
+// 		res.innerHTML=``;
+// 		results.forEach((item)=>{
+// 			res.innerHTML +=`
+//    <tr>
+//    <td>$(item.name)</td>
+//    <td>$(item.time)</td>
+//    </tr>`;
+// 	});
+// 	}).catch((err)=>{
+// 		console.log(err);
+// 	});
+// }
+
+// callfn();
+
+
+
+const res = document.getElementById("output");
+
+const promises = [
+  new Promise((resolve) => {
+    const time = Math.floor(Math.random() * 3 + 1) * 1000;
+    setTimeout(() => resolve({ name: "Promise 1", time: time / 1000 }), time);
+  }),
+  new Promise((resolve) => {
+    const time = Math.floor(Math.random() * 3 + 1) * 1000;
+    setTimeout(() => resolve({ name: "Promise 2", time: time / 1000 }), time);
+  }),
+  new Promise((resolve) => {
+    const time = Math.floor(Math.random() * 3 + 1) * 1000;
+    setTimeout(() => resolve({ name: "Promise 3", time: time / 1000 }), time);
+  }),
+];
+
+async function callfn() {
+  res.innerHTML = `<tr><td colspan="2">Loading...</td></tr>`;
+
+  await Promise.all(promises)
+    .then((results) => {
+      res.innerHTML = "";
+      results.forEach((item) => {
+        res.innerHTML += `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.time}</td>
+          </tr>`;
+      });
+      const totalTime = results.reduce((total, item) => total + item.time, 0);
+      res.innerHTML += `
+        <tr>
+          <td>Total</td>
+          <td>${totalTime.toFixed(3)}</td>
+        </tr>`;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
-Promise.all(promises).then((results) => {
-  const table = document.getElementById("table");
-
-  // Remove the loading text
-  const loadingRow = table.rows[0];
-  loadingRow.remove();
-
-  // Add the results to the table
-  for (let i = 0; i < results.length; i++) {
-    const row = table.insertRow(-1);
-    row.insertCell(0).textContent = `Promise ${i + 1}`;
-    row.insertCell(1).textContent = results[i];
-  }
-
-  // Calculate the total time taken to resolve all promises
-  const totalTime = results.reduce((sum, value) => sum + value, 0);
-
-  // Add a row for the total time
-  const totalRow = table.insertRow(-1);
-  totalRow.insertCell(0).textContent = "Total";
-  totalRow.insertCell(1).textContent = totalTime.toFixed(2);
-});
+callfn();
